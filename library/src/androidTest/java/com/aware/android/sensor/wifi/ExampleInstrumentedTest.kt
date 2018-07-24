@@ -2,7 +2,7 @@ package com.aware.android.sensor.wifi
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
-import com.aware.android.sensor.wifi.model.WiFiData
+import com.aware.android.sensor.wifi.model.WiFiScanData
 import com.awareframework.android.core.db.Engine
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -23,7 +23,7 @@ class ExampleInstrumentedTest {
 
         WiFiService.startService(appContext, WiFiService.WiFiConfig().apply {
             sensorObserver = object : WiFiObserver {
-                override fun onWiFiAPDetected(data: WiFiData) {
+                override fun onWiFiAPDetected(data: WiFiScanData) {
                     // your code here...
                 }
 

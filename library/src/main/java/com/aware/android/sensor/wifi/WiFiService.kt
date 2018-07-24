@@ -15,7 +15,8 @@ import android.net.wifi.WifiManager.SCAN_RESULTS_AVAILABLE_ACTION
 import android.os.IBinder
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.aware.android.sensor.wifi.model.WiFiData
+import com.aware.android.sensor.wifi.model.WiFiScanData
+import com.aware.android.sensor.wifi.model.WiFiDeviceData
 import com.awareframework.android.core.AwareSensor
 import com.awareframework.android.core.db.Engine
 import com.awareframework.android.core.model.SensorConfig
@@ -191,16 +192,16 @@ class WiFiService : AwareSensor(), WiFiObserver {
     }
 
 
-    override fun onWiFiAPDetected(data: WiFiData) {
+    override fun onWiFiAPDetected(data: WiFiScanData) {
 
     }
 
     override fun onWiFiDisabled() {
-        dbEngine?.save(WiFiData().apply {
+        dbEngine?.save(WiFiScanData().apply {
             deviceId = CONFIG.deviceId
             timestamp = System.currentTimeMillis()
             label = "disabled"
-        }, WiFiData.TABLE_NAME)
+        }, WiFiScanData.TABLE_NAME)
 
         CONFIG.sensorObserver?.onWiFiDisabled()
     }
@@ -210,17 +211,17 @@ class WiFiService : AwareSensor(), WiFiObserver {
 
         // synchronously get the AP we are currently connected to.
         val wifiInfo = thread(start = false) {
-            val data = WiFiData().apply {
+            val data = WiFiDeviceData().apply {
                 deviceId = CONFIG.deviceId
                 timestamp = System.currentTimeMillis()
                 macAddress = wifi.macAddress    // TODO add optional encryption
                 bssid = wifi.bssid              // TODO add optional encryption
                 ssid = wifi.ssid                // TODO add optional encryption
             }
-            dbEngine?.save(data, WiFiData.TABLE_NAME)
+            dbEngine?.save(data, WiFiScanData.TABLE_NAME)
 
             sendBroadcast(Intent(ACTION_AWARE_WIFI_CURRENT_AP).apply {
-                // putExtra(EXTRA_DATA, data.toString()) // TODO fix
+                putExtra(EXTRA_DATA, Gson().toJson(data)) // TODO fix
             })
 
             logd("WiFi local sensor information: $data")
@@ -236,7 +237,7 @@ class WiFiService : AwareSensor(), WiFiObserver {
             for (ap in aps) {
                 ap ?: continue
 
-                val data = WiFiData().apply {
+                val data = WiFiScanData().apply {
                     deviceId = CONFIG.deviceId
                     timestamp = currentScan
                     bssid = ap.BSSID
@@ -275,7 +276,8 @@ class WiFiService : AwareSensor(), WiFiObserver {
     }
 
     override fun onSync(intent: Intent?) {
-        dbEngine?.startSync(WiFiData.TABLE_NAME)
+        dbEngine?.startSync(WiFiScanData.TABLE_NAME)
+        dbEngine?.startSync(WiFiDeviceData.TABLE_NAME)
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

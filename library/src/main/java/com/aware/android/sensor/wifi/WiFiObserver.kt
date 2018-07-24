@@ -1,6 +1,6 @@
 package com.aware.android.sensor.wifi
 
-import com.aware.android.sensor.wifi.model.WiFiData
+import com.aware.android.sensor.wifi.model.WiFiScanData
 
 /**
  * Observer for WiFi events.
@@ -9,7 +9,7 @@ import com.aware.android.sensor.wifi.model.WiFiData
  * @date 23/07/2018
  */
 interface WiFiObserver {
-    fun onWiFiAPDetected(data: WiFiData)
+    fun onWiFiAPDetected(data: WiFiScanData)
     fun onWiFiDisabled()
     fun onWiFiScanStarted()
     fun onWiFiScanEnded()
