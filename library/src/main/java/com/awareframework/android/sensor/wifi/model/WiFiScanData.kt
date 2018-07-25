@@ -1,6 +1,7 @@
 package com.awareframework.android.sensor.wifi.model
 
 import com.awareframework.android.core.model.AwareObject
+import com.google.gson.Gson
 
 /**
  * Contains the scan results data.
@@ -18,4 +19,6 @@ class WiFiScanData(
     companion object {
         const val TABLE_NAME = "wifiScanData"
     }
+
+    override fun toString(): String = Gson().toJson(this)
 }

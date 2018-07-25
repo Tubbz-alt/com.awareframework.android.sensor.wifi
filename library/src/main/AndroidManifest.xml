@@ -8,8 +8,12 @@
 
     <application>
         <service
+            android:name="com.awareframework.android.sensor.wifi.WiFiService"
+            android:exported="true" />
+        <service
             android:name="com.awareframework.android.sensor.wifi.WiFiService$BackgroundService"
             android:exported="true" />
+
         <receiver
             android:name="com.awareframework.android.sensor.wifi.WiFiService$WiFiServiceBroadcastReceiver"
             android:exported="true">
