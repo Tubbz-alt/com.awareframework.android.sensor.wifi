@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.aware.android.sensor.wifi">
+    package="com.awareframework.android.sensor.wifi">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -8,10 +8,10 @@
 
     <application>
         <service
-            android:name=".WiFiService$BackgroundService"
+            android:name="com.awareframework.android.sensor.wifi.WiFiService$BackgroundService"
             android:exported="true" />
         <receiver
-            android:name=".WiFiService$WiFiServiceBroadcastReceiver"
+            android:name="com.awareframework.android.sensor.wifi.WiFiService$WiFiServiceBroadcastReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.aware.android.sensor.wifi.SENSOR_START" />

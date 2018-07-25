@@ -1,6 +1,6 @@
-package com.aware.android.sensor.wifi
+package com.awareframework.android.sensor.wifi
 
-import com.aware.android.sensor.wifi.model.WiFiScanData
+import com.awareframework.android.sensor.wifi.model.WiFiScanData
 
 /**
  * Observer for WiFi events.

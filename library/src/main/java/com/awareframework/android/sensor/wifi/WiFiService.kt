@@ -1,4 +1,4 @@
-package com.aware.android.sensor.wifi
+package com.awareframework.android.sensor.wifi
 
 import android.Manifest
 import android.app.AlarmManager
@@ -15,8 +15,8 @@ import android.net.wifi.WifiManager.SCAN_RESULTS_AVAILABLE_ACTION
 import android.os.IBinder
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.aware.android.sensor.wifi.model.WiFiScanData
-import com.aware.android.sensor.wifi.model.WiFiDeviceData
+import com.awareframework.android.sensor.wifi.model.WiFiScanData
+import com.awareframework.android.sensor.wifi.model.WiFiDeviceData
 import com.awareframework.android.core.AwareSensor
 import com.awareframework.android.core.db.Engine
 import com.awareframework.android.core.model.SensorConfig

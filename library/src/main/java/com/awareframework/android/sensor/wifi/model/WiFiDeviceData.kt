@@ -1,4 +1,4 @@
-package com.aware.android.sensor.wifi.model
+package com.awareframework.android.sensor.wifi.model
 
 import com.awareframework.android.core.model.AwareObject
 
