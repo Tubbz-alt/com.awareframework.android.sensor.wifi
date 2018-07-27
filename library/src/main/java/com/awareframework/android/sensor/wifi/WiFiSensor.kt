@@ -31,11 +31,11 @@ import kotlin.concurrent.thread
  * @author  sercant
  * @date 23/07/2018
  */
-class WiFiService : AwareSensor(), WiFiObserver {
+class WiFiSensor : AwareSensor(), WiFiObserver {
 
     companion object {
 
-        const val TAG = "AwareWiFiService"
+        const val TAG = "AwareWiFiSensor"
 
         const val ACTION_AWARE_WIFI_START = "com.aware.android.sensor.wifi.SENSOR_START"
         const val ACTION_AWARE_WIFI_STOP = "com.aware.android.sensor.wifi.SENSOR_STOP"
@@ -72,16 +72,16 @@ class WiFiService : AwareSensor(), WiFiObserver {
         fun startService(context: Context, config: WiFiConfig? = null) {
             if (config != null)
                 CONFIG.replaceWith(config)
-            context.startService(Intent(context, WiFiService::class.java))
+            context.startService(Intent(context, WiFiSensor::class.java))
         }
 
         fun stopService(context: Context) {
-            context.stopService(Intent(context, WiFiService::class.java))
+            context.stopService(Intent(context, WiFiSensor::class.java))
         }
 
         val CONFIG: WiFiConfig = WiFiConfig()
 
-        var instance: WiFiService? = null
+        var instance: WiFiSensor? = null
 
         val REQUIRED_PERMISSIONS = arrayOf(
                 Manifest.permission.CHANGE_WIFI_STATE,
@@ -334,7 +334,7 @@ class WiFiService : AwareSensor(), WiFiObserver {
         }
     }
 
-    class WiFiServiceBroadcastReceiver : AwareSensor.SensorBroadcastReceiver() {
+    class WiFiSensorBroadcastReceiver : AwareSensor.SensorBroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
             context ?: return
@@ -365,9 +365,9 @@ class WiFiService : AwareSensor(), WiFiObserver {
 }
 
 private fun logd(text: String) {
-    if (WiFiService.CONFIG.debug) Log.d(WiFiService.TAG, text)
+    if (WiFiSensor.CONFIG.debug) Log.d(WiFiSensor.TAG, text)
 }
 
 private fun logw(text: String) {
-    Log.w(WiFiService.TAG, text)
+    Log.w(WiFiSensor.TAG, text)
 }

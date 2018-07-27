@@ -8,7 +8,7 @@ Logs the mobile device’s Wi-Fi sensor, current AP and surrounding Wi-Fi visibl
 
 ## Public functions
 
-### WiFiService
+### WiFiSensor
 
 + `startService(context: Context, config: WiFiConfig?)`: Starts the Wi-Fi sensor with the optional configuration.
 + `stopService(context: Context)`: Stops the Wi-Fi service.
@@ -32,10 +32,10 @@ Class to hold the configuration of the Wi-Fi sensor.
 
 ## Broadcasts
 
-+ `WiFiService.ACTION_AWARE_WIFI_CURRENT_AP` currently connected to this AP. In the extras, `WiFiService.EXTRA_DATA` includes the WiFiData in json string format.
-+ `WiFiService.ACTION_AWARE_WIFI_NEW_DEVICE` new WiFi AP device detected. In the extras, `WiFiService.EXTRA_DATA` includes the WiFiData in json string format.
-+ `WiFiService.ACTION_AWARE_WIFI_SCAN_STARTED` WiFi scan started
-+ `WiFiService.ACTION_AWARE_WIFI_SCAN_ENDED` WiFi scan ended.
++ `WiFiSensor.ACTION_AWARE_WIFI_CURRENT_AP` currently connected to this AP. In the extras, `WiFiSensor.EXTRA_DATA` includes the WiFiData in json string format.
++ `WiFiSensor.ACTION_AWARE_WIFI_NEW_DEVICE` new WiFi AP device detected. In the extras, `WiFiSensor.EXTRA_DATA` includes the WiFiData in json string format.
++ `WiFiSensor.ACTION_AWARE_WIFI_SCAN_STARTED` WiFi scan started
++ `WiFiSensor.ACTION_AWARE_WIFI_SCAN_ENDED` WiFi scan ended.
 
 ## Data Representations
 
@@ -69,7 +69,7 @@ Class to hold the configuration of the Wi-Fi sensor.
 
 ```kotlin
 // To start the service.
-WiFiService.startService(appContext, WiFiService.WiFiConfig().apply {
+WiFiSensor.startService(appContext, WiFiSensor.WiFiConfig().apply {
     sensorObserver = object : WiFiObserver {
         override fun onWiFiAPDetected(data: WiFiScanData) {
             // your code here...
@@ -93,7 +93,7 @@ WiFiService.startService(appContext, WiFiService.WiFiConfig().apply {
 })
 
 // To stop the service
-WiFiService.stopService(appContext)
+WiFiSensor.stopService(appContext)
 ```
 
 ## License

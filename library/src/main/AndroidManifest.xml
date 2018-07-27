@@ -8,14 +8,14 @@
 
     <application>
         <service
-            android:name="com.awareframework.android.sensor.wifi.WiFiService"
+            android:name="com.awareframework.android.sensor.wifi.WiFiSensor"
             android:exported="true" />
         <service
-            android:name="com.awareframework.android.sensor.wifi.WiFiService$BackgroundService"
+            android:name="com.awareframework.android.sensor.wifi.WiFiSensor$BackgroundService"
             android:exported="true" />
 
         <receiver
-            android:name="com.awareframework.android.sensor.wifi.WiFiService$WiFiServiceBroadcastReceiver"
+            android:name="com.awareframework.android.sensor.wifi.WiFiSensor$WiFiSensorBroadcastReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.aware.android.sensor.wifi.SENSOR_START" />
