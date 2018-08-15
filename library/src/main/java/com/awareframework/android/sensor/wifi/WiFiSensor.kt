@@ -126,12 +126,7 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
     override fun onCreate() {
         super.onCreate()
 
-        dbEngine = Engine.Builder(this)
-                .setType(CONFIG.dbType)
-                .setPath(CONFIG.dbPath)
-                .setHost(CONFIG.dbHost)
-                .setEncryptionKey(CONFIG.dbEncryptionKey)
-                .build()
+        initializeDbEngine(CONFIG)
 
         alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         wifiManager = applicationContext.getSystemService(WIFI_SERVICE) as WifiManager
@@ -189,6 +184,8 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
         logd("WiFi service terminated.")
 
         instance = null
+
+        dbEngine?.close()
     }
 
 
