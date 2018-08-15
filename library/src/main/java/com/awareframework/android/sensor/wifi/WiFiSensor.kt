@@ -280,7 +280,7 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
     override fun onBind(intent: Intent?): IBinder? = null
 
     data class WiFiConfig(
-            var sensorObserver: WiFiObserver? = null,
+            var sensorObserver: SensorObserver? = null,
             var frequency: Float = 1f
     ) : SensorConfig(dbPath = "aware_wifi") {
         override fun <T : SensorConfig> replaceWith(config: T) {
@@ -358,6 +358,13 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
                 }
             }
         }
+    }
+
+    interface SensorObserver {
+        fun onWiFiAPDetected(data: WiFiScanData)
+        fun onWiFiDisabled()
+        fun onWiFiScanStarted()
+        fun onWiFiScanEnded()
     }
 }
 
