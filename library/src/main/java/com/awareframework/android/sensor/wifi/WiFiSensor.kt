@@ -15,11 +15,10 @@ import android.net.wifi.WifiManager.SCAN_RESULTS_AVAILABLE_ACTION
 import android.os.IBinder
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import com.awareframework.android.sensor.wifi.model.WiFiScanData
-import com.awareframework.android.sensor.wifi.model.WiFiDeviceData
 import com.awareframework.android.core.AwareSensor
-import com.awareframework.android.core.db.Engine
 import com.awareframework.android.core.model.SensorConfig
+import com.awareframework.android.sensor.wifi.model.WiFiDeviceData
+import com.awareframework.android.sensor.wifi.model.WiFiScanData
 import com.google.gson.Gson
 import java.util.concurrent.Executors
 import kotlin.concurrent.thread
@@ -37,30 +36,55 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
 
         const val TAG = "AwareWiFiSensor"
 
+        /**
+         * Received event: Fire it to start the WiFi sensor.
+         */
         const val ACTION_AWARE_WIFI_START = "com.aware.android.sensor.wifi.SENSOR_START"
+
+        /**
+         * Received event: Fire it to stop the WiFi sensor.
+         */
         const val ACTION_AWARE_WIFI_STOP = "com.aware.android.sensor.wifi.SENSOR_STOP"
+
+        /**
+         * Received event: Fire it to sync the data with the server.
+         */
         const val ACTION_AWARE_WIFI_SYNC = "com.aware.android.sensor.wifi.SYNC"
+
+        /**
+         * Received event: Fire it to set the data label.
+         * Use [EXTRA_LABEL] to send the label string.
+         */
         const val ACTION_AWARE_WIFI_SET_LABEL = "com.aware.android.sensor.wifi.SET_LABEL"
+
+        /**
+         * Label string sent in the intent extra.
+         */
         const val EXTRA_LABEL = "label"
 
         /**
-         * Broadcasted event: currently connected to this AP
+         * Fired event: currently connected to this AP
          */
         const val ACTION_AWARE_WIFI_CURRENT_AP = "ACTION_AWARE_WIFI_CURRENT_AP"
 
         /**
-         * Broadcasted event: new WiFi AP device detected
+         * Fired event: new WiFi AP device detected.
+         * [WiFiSensor.EXTRA_DATA] contains the JSON version of the discovered device.
          */
         const val ACTION_AWARE_WIFI_NEW_DEVICE = "ACTION_AWARE_WIFI_NEW_DEVICE"
+
+        /**
+         * Contains the JSON version of the discovered device.
+         */
         const val EXTRA_DATA = "data"
 
         /**
-         * Broadcasted event: WiFi scan started
+         * Fired event: WiFi scan started.
          */
         const val ACTION_AWARE_WIFI_SCAN_STARTED = "ACTION_AWARE_WIFI_SCAN_STARTED"
 
         /**
-         * Broadcasted event: WiFi scan ended
+         * Fired event: WiFi scan ended.
          */
         const val ACTION_AWARE_WIFI_SCAN_ENDED = "ACTION_AWARE_WIFI_SCAN_ENDED"
 
@@ -69,20 +93,34 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
          */
         const val ACTION_AWARE_WIFI_REQUEST_SCAN = "ACTION_AWARE_WIFI_REQUEST_SCAN"
 
-        fun startService(context: Context, config: WiFiConfig? = null) {
+        /**
+         * Start the sensor with the given optional configuration.
+         */
+        fun start(context: Context, config: Config? = null) {
             if (config != null)
                 CONFIG.replaceWith(config)
             context.startService(Intent(context, WiFiSensor::class.java))
         }
 
-        fun stopService(context: Context) {
+        /**
+         * Stop the service if it's currently running.
+         */
+        fun stop(context: Context) {
             context.stopService(Intent(context, WiFiSensor::class.java))
         }
 
-        val CONFIG: WiFiConfig = WiFiConfig()
+        /**
+         * Current configuration of the WiFiSensor. Some changes in the configuration will have
+         * immediate effect.
+         */
+        val CONFIG: Config = Config()
 
-        var instance: WiFiSensor? = null
 
+        private var instance: WiFiSensor? = null
+
+        /**
+         * Required permissions to ask in the runtime to use this sensor.
+         */
         val REQUIRED_PERMISSIONS = arrayOf(
                 Manifest.permission.CHANGE_WIFI_STATE,
                 Manifest.permission.ACCESS_WIFI_STATE,
@@ -91,11 +129,19 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
         )
     }
 
+    /**
+     * Alarm manager to initiate wi-fi scans.
+     */
     private lateinit var alarmManager: AlarmManager
+
     private var wifiManager: WifiManager? = null
+
     private lateinit var wifiScan: PendingIntent
     private lateinit var backgroundService: Intent
 
+    /**
+     * Listens [WifiManager.SCAN_RESULTS_AVAILABLE_ACTION] to start the background service.
+     */
     private val wifiMonitor = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
@@ -108,6 +154,9 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
         }
     }
 
+    /**
+     * Listens [ACTION_AWARE_WIFI_SET_LABEL] and [ACTION_AWARE_WIFI_SYNC].
+     */
     private val wifiReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             intent ?: return
@@ -156,7 +205,6 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
             return START_NOT_STICKY
         }
 
-        // TODO Check permissions
         if (wifiManager == null) {
             logw("This device does not have a WiFi chip")
             stopSelf()
@@ -193,6 +241,9 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
 
     }
 
+    /**
+     * Save the event to the db and trigger the function on the observer.
+     */
     override fun onWiFiDisabled() {
         dbEngine?.save(WiFiScanData().apply {
             deviceId = CONFIG.deviceId
@@ -203,6 +254,9 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
         CONFIG.sensorObserver?.onWiFiDisabled()
     }
 
+    /**
+     * Save the results of the wi-fi scan.
+     */
     fun onWiFiResultsAvailable() {
         val wifi = wifiManager?.connectionInfo ?: return
 
@@ -264,14 +318,23 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
         instance?.onWiFiScanEnded()
     }
 
+    /**
+     * Trigger the sensor observer when wi-fi scan has started.
+     */
     override fun onWiFiScanStarted() {
         CONFIG.sensorObserver?.onWiFiScanStarted()
     }
 
+    /**
+     * Trigger the sensor observer when wi-fi scan has ended.
+     */
     override fun onWiFiScanEnded() {
         CONFIG.sensorObserver?.onWiFiScanEnded()
     }
 
+    /**
+     * Sync the related fields of the db to server.
+     */
     override fun onSync(intent: Intent?) {
         dbEngine?.startSync(WiFiScanData.TABLE_NAME)
         dbEngine?.startSync(WiFiDeviceData.TABLE_NAME)
@@ -279,14 +342,17 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    data class WiFiConfig(
-            var sensorObserver: SensorObserver? = null,
+    /**
+     * Configuration of the sensor.
+     */
+    data class Config(
+            var sensorObserver: Observer? = null,
             var frequency: Float = 1f
     ) : SensorConfig(dbPath = "aware_wifi") {
         override fun <T : SensorConfig> replaceWith(config: T) {
             super.replaceWith(config)
 
-            if (config is WiFiConfig) {
+            if (config is Config) {
                 sensorObserver = config.sensorObserver
                 frequency = config.frequency
             }
@@ -331,6 +397,10 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
         }
     }
 
+    /**
+     * Listens to [AwareSensor.SensorBroadcastReceiver.SENSOR_START_ENABLED], [ACTION_AWARE_WIFI_STOP],
+     * [AwareSensor.SensorBroadcastReceiver.SENSOR_STOP_ALL], [ACTION_AWARE_WIFI_START] events.
+     */
     class WiFiSensorBroadcastReceiver : AwareSensor.SensorBroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -339,31 +409,51 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
             logd("Sensor broadcast received. action: " + intent?.action)
 
             when (intent?.action) {
-                AwareSensor.SensorBroadcastReceiver.SENSOR_START_ENABLED -> {
+                SENSOR_START_ENABLED -> {
                     logd("Sensor enabled: " + CONFIG.enabled)
 
                     if (CONFIG.enabled) {
-                        startService(context)
+                        start(context)
                     }
                 }
 
                 ACTION_AWARE_WIFI_STOP,
-                AwareSensor.SensorBroadcastReceiver.SENSOR_STOP_ALL -> {
+                SENSOR_STOP_ALL -> {
                     logd("Stopping sensor.")
-                    stopService(context)
+                    stop(context)
                 }
 
                 ACTION_AWARE_WIFI_START -> {
-                    startService(context)
+                    start(context)
                 }
             }
         }
     }
 
-    interface SensorObserver {
+    /**
+     * Observer to listen to live data updates.
+     */
+    interface Observer {
+        /**
+         * Called when a wi-fi AP detected.
+         *
+         * @param data: Detected wi-fi AP.
+         */
         fun onWiFiAPDetected(data: WiFiScanData)
+
+        /**
+         * Called when the wi-fi disabled.
+         */
         fun onWiFiDisabled()
+
+        /**
+         * Called when the scan has started.
+         */
         fun onWiFiScanStarted()
+
+        /**
+         * Called when the wi-fi scan finished.
+         */
         fun onWiFiScanEnded()
     }
 }

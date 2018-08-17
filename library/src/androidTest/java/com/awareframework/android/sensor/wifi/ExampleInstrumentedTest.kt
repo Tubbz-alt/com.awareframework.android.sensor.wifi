@@ -21,8 +21,8 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getTargetContext()
         assertEquals("com.aware.android.sensor.wifi.test", appContext.packageName)
 
-        WiFiSensor.startService(appContext, WiFiSensor.WiFiConfig().apply {
-            sensorObserver = object : WiFiObserver {
+        WiFiSensor.start(appContext, WiFiSensor.Config().apply {
+            sensorObserver = object : WiFiSensor.Observer {
                 override fun onWiFiAPDetected(data: WiFiScanData) {
                     // your code here...
                 }

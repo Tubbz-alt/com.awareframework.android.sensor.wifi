@@ -10,25 +10,26 @@ Logs the mobile device’s Wi-Fi sensor, current AP and surrounding Wi-Fi visibl
 
 ### WiFiSensor
 
-+ `startService(context: Context, config: WiFiConfig?)`: Starts the Wi-Fi sensor with the optional configuration.
-+ `stopService(context: Context)`: Stops the Wi-Fi service.
++ `start(context: Context, config: WiFiSensor.Config?)`: Starts the Wi-Fi sensor with the optional configuration.
++ `stop(context: Context)`: Stops the Wi-Fi service.
 + `REQUIRED_PERMISSIONS`: An array of required android permissions for this module.
 
-### WiFiConfig
+### WiFiSensor.Config
 
 Class to hold the configuration of the Wi-Fi sensor.
 
 #### Fields
 
-+ `debug: Boolean`: enable/disable logging to `Logcat`. (default = false)
-+ `host: String`: Host for syncing the database. (default = null)
-+ `key: String`: Encryption key for the database. (default = no encryption)
-+ `host: String`: Host for syncing the database. (default = null)
-+ `type: EngineDatabaseType)`: Which db engine to use for saving data. (default = NONE)
-+ `path: String`: Path of the database.
-+ `deviceId: String`: Id of the device that will be associated with the events and the sensor. (default = "")
 + `sensorObserver: WiFiObserver`: Callback for live data updates.
 + `frequency: Float`: Frequency of the Wi-Fi data querying in minutes. (default = 1f)
++ `enabled: Boolean` Sensor is enabled or not. (default = false)
++ `debug: Boolean` enable/disable logging to `Logcat`. (default = false)
++ `label: String` Label for the data. (default = "")
++ `deviceId: String` Id of the device that will be associated with the events and the sensor. (default = "")
++ `dbEncryptionKey` Encryption key for the database. (default =String? = null)
++ `dbType: Engine` Which db engine to use for saving data. (default = `Engine.DatabaseType.NONE`)
++ `dbPath: String` Path of the database. (default = "aware_wifi")
++ `dbHost: String` Host for syncing the database. (Defult = `null`)
 
 ## Broadcasts
 
@@ -41,36 +42,38 @@ Class to hold the configuration of the Wi-Fi sensor.
 
 ### WiFi Device Data
 
-| Field      | Type   | Description                                   |
-| ---------- | ------ | --------------------------------------------- |
-| macAddress | String | device’s MAC address                         |
-| bssid      | String | currently connected access point MAC address  |
-| ssid       | String | currently connected access point network name |
-| deviceId   | String | AWARE device UUID                             |
-| timestamp  | Long   | unixtime milliseconds since 1970              |
-| timezone   | Int    | WiFi of the device                            |
-| os         | String | Operating system of the device (ex. android)  |
+| Field      | Type   | Description                                                     |
+| ---------- | ------ | --------------------------------------------------------------- |
+| macAddress | String | device’s MAC address                                           |
+| bssid      | String | currently connected access point MAC address                    |
+| ssid       | String | currently connected access point network name                   |
+| deviceId   | String | AWARE device UUID                                               |
+| label      | String | Customizable label. Useful for data calibration or traceability |
+| timestamp  | Long   | unixtime milliseconds since 1970                                |
+| timezone   | Int    | WiFi of the device                                              |
+| os         | String | Operating system of the device (ex. android)                    |
 
 ### WiFi Scan Data
 
-| Field     | Type   | Description                                    |
-| --------- | ------ | ---------------------------------------------- |
-| bssid     | String | currently connected access point MAC address   |
-| ssid      | String | currently connected access point network name  |
-| security  | String | active security protocols                      |
-| frequency | Int    | Wi-Fi band frequency (e.g., 2427, 5180), in Hz |
-| rssi      | Int    | RSSI dB to the scanned device                  |
-| deviceId  | String | AWARE device UUID                              |
-| timestamp | Long   | unixtime milliseconds since 1970               |
-| timezone  | Int    | WiFi of the device                             |
-| os        | String | Operating system of the device (ex. android)   |
+| Field     | Type   | Description                                                     |
+| --------- | ------ | --------------------------------------------------------------- |
+| bssid     | String | currently connected access point MAC address                    |
+| ssid      | String | currently connected access point network name                   |
+| security  | String | active security protocols                                       |
+| frequency | Int    | Wi-Fi band frequency (e.g., 2427, 5180), in Hz                  |
+| rssi      | Int    | RSSI dB to the scanned device                                   |
+| deviceId  | String | AWARE device UUID                                               |
+| label     | String | Customizable label. Useful for data calibration or traceability |
+| timestamp | Long   | unixtime milliseconds since 1970                                |
+| timezone  | Int    | WiFi of the device                                              |
+| os        | String | Operating system of the device (ex. android)                    |
 
 ## Example usage
 
 ```kotlin
 // To start the service.
-WiFiSensor.startService(appContext, WiFiSensor.WiFiConfig().apply {
-    sensorObserver = object : WiFiObserver {
+WiFiSensor.start(appContext, WiFiSensor.Config().apply {
+    sensorObserver = object : WiFiSensor.Observer {
         override fun onWiFiAPDetected(data: WiFiScanData) {
             // your code here...
         }
@@ -93,7 +96,7 @@ WiFiSensor.startService(appContext, WiFiSensor.WiFiConfig().apply {
 })
 
 // To stop the service
-WiFiSensor.stopService(appContext)
+WiFiSensor.stop(appContext)
 ```
 
 ## License
