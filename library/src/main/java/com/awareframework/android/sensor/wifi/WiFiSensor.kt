@@ -34,7 +34,7 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
 
     companion object {
 
-        const val TAG = "AwareWiFiSensor"
+        const val TAG = "Aware::WiFi"
 
         /**
          * Received event: Fire it to start the WiFi sensor.
