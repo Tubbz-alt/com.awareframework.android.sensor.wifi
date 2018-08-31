@@ -263,8 +263,10 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
         // synchronously get the AP we are currently connected to.
         val wifiInfo = thread(start = false) {
             val data = WiFiDeviceData().apply {
-                deviceId = CONFIG.deviceId
                 timestamp = System.currentTimeMillis()
+                deviceId = CONFIG.deviceId
+                label = CONFIG.label
+
                 macAddress = wifi.macAddress    // TODO add optional encryption
                 bssid = wifi.bssid              // TODO add optional encryption
                 ssid = wifi.ssid                // TODO add optional encryption
@@ -289,8 +291,10 @@ class WiFiSensor : AwareSensor(), WiFiObserver {
                 ap ?: continue
 
                 val data = WiFiScanData().apply {
-                    deviceId = CONFIG.deviceId
                     timestamp = currentScan
+                    deviceId = CONFIG.deviceId
+                    label = CONFIG.label
+
                     bssid = ap.BSSID
                     ssid = ap.SSID
                     security = ap.capabilities
