@@ -22,14 +22,14 @@ Class to hold the configuration of the Wi-Fi sensor.
 
 + `sensorObserver: WiFiObserver`: Callback for live data updates.
 + `frequency: Float`: Frequency of the Wi-Fi data querying in minutes. (default = 1f)
-+ `enabled: Boolean` Sensor is enabled or not. (default = false)
-+ `debug: Boolean` enable/disable logging to `Logcat`. (default = false)
++ `enabled: Boolean` Sensor is enabled or not. (default = `false`)
++ `debug: Boolean` enable/disable logging to `Logcat`. (default = `false`)
 + `label: String` Label for the data. (default = "")
 + `deviceId: String` Id of the device that will be associated with the events and the sensor. (default = "")
-+ `dbEncryptionKey` Encryption key for the database. (default =String? = null)
++ `dbEncryptionKey` Encryption key for the database. (default = `null`)
 + `dbType: Engine` Which db engine to use for saving data. (default = `Engine.DatabaseType.NONE`)
 + `dbPath: String` Path of the database. (default = "aware_wifi")
-+ `dbHost: String` Host for syncing the database. (Defult = `null`)
++ `dbHost: String` Host for syncing the database. (default = `null`)
 
 ## Broadcasts
 
